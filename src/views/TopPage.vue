@@ -11,6 +11,24 @@
         <button @click="moveToRanking">SHOW</button>
       </div>
     </div>
+    <div id="howTo">
+      <span>HOW TO PLAY</span>
+      <table>
+        <thead>
+          <tr>
+            <th v-for="(header, index) in headers" v-bind:key="index">
+              {{ header }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(value, index) in keyConfig" v-bind:key="index">
+            <td>{{ value.keyName }}</td>
+            <td>{{ value.move }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -28,9 +46,20 @@ export default defineComponent({
       return router.replace({ name: "Ranking" });
     };
 
+    const headers = ["キー", "動作"];
+    const keyConfig = [
+      { keyName: "←/→", move: "左移動 / 右移動" },
+      { keyName: "↓", move: "高速落下" },
+      { keyName: "↑", move: "ハードドロップ" },
+      { keyName: "z/x", move: "左回転 / 右回転" },
+      { keyName: "a", move: "HOLD と落下中のテトリミノの入れ替え" },
+    ];
+
     return {
       moveToTetris,
       moveToRanking,
+      headers,
+      keyConfig,
     };
   },
 });
@@ -87,5 +116,15 @@ table {
       }
     }
   }
+}
+#howTo {
+  margin-top: 5rem;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  font-size: 25px;
+  color: cornsilk;
+  max-width: 50%;
 }
 </style>
