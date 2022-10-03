@@ -5,6 +5,6 @@ module.exports = defineConfig({
   publicPath: "./",
   devServer: {
     port: process.env.PORT,
-    allowedHost: ["vue3-tetris.herokuapp.com", "localhost"],
+    allowedHosts: ["vue3-tetris.herokuapp.com", "localhost"],
   },
 });
