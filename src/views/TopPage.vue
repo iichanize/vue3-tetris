@@ -118,8 +118,7 @@ table {
   }
 }
 #howTo {
-  margin-top: 5rem;
-  margin-left: auto;
+  margin: 5rem auto;
   display: flex;
   flex-direction: column;
   text-align: center;
