@@ -5,5 +5,6 @@ module.exports = defineConfig({
   publicPath: "./",
   devServer: {
     port: process.env.PORT,
+    disableHostCheck: true,
   },
 });
