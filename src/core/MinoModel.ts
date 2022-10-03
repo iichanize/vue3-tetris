@@ -4,12 +4,6 @@ import Constants from "./Constants";
 const DEFAULT_FORCE = 0.25;
 let instanseCount = 0;
 
-const random = (min: number, max: number) => min + (max - min) * Math.random();
-
-const randomScale = (): number => {
-  return Math.random() * 0.5 + 0.6;
-};
-
 const randomName = () => {
   return Constants.NAMES[Math.floor(Math.random() * 7)];
 };

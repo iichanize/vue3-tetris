@@ -28,7 +28,7 @@ import Score from "../domain/Score";
 import ScoreTransfer from "../infrastructure/transfer/ScoreTransfer";
 export default defineComponent({
   name: "Ranking",
-  setup(_, ctx) {
+  setup() {
     const router = useRouter();
     const scoreTransfer = new ScoreTransfer();
     let ranking: Ref<Score[]> = ref([]);

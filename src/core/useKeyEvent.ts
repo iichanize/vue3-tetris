@@ -1,4 +1,4 @@
-import { onMounted, reactive, onUnmounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 
 type KeyEventHandler = (ev: KeyboardEvent) => void;
 

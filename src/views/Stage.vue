@@ -40,7 +40,7 @@ export default defineComponent({
   props: {
     maxFish: { type: Number, default: 50 },
   },
-  setup(_, ctx) {
+  setup() {
     let flag = ref(false);
     let score = ref(0);
     let userName = ref("");
@@ -55,8 +55,8 @@ export default defineComponent({
     const sendScore = async (name: string, value: number) => {
       return await scoreTransfer.sendScore(name, value);
     };
-    const moveToRanking = () => {
-      sendScore(userName.value, score.value);
+    const moveToRanking = async () => {
+      await sendScore(userName.value, score.value);
       return router.replace({ name: "Ranking" });
     };
     return {

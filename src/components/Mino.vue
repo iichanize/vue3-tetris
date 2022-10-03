@@ -53,7 +53,6 @@ import { useAnimationFrame } from "../core/useAnimationFrame";
 import { MinoModel } from "../core/MinoModel";
 import Constants from "../core/Constants";
 import { useKeyDown } from "../core/useKeyEvent";
-import ScoreTransfer from "../infrastructure/transfer/ScoreTransfer";
 
 /**
  * ミノレイヤーの状態を管理する型
@@ -82,7 +81,6 @@ export default defineComponent({
   setup(props, ctx) {
     // state: レイヤーの状態
     // const { keyInput } = toRefs(props);
-    const scoreTransfer = new ScoreTransfer();
     let keyInput = ref("");
     const stageState = reactive<StageState>({
       minoList: [],

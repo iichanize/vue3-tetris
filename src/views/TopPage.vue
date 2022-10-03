@@ -19,7 +19,7 @@ import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 export default defineComponent({
   name: "Top",
-  setup(_, ctx) {
+  setup() {
     const router = useRouter();
     const moveToTetris = () => {
       return router.replace({ name: "Tetris" });
