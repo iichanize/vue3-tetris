@@ -598,10 +598,10 @@ export default defineComponent({
           }
           record();
           if (
-            stageState.deleteLineNum % 10 === 0 &&
-            Math.ceil(stageState.deleteLineNum / 10) < 30
+            stageState.deleteLineNum % 5 === 0 &&
+            Math.ceil(stageState.deleteLineNum / 5) < 30
           )
-            stageState.level = Math.ceil(stageState.deleteLineNum / 10) + 1;
+            stageState.level = Math.ceil(stageState.deleteLineNum / 5) + 1;
         }
       }
       if (!isFillLine) stageState.ren = 0;
@@ -646,7 +646,7 @@ export default defineComponent({
       //   stageState.healthCheckTime = 0;
       // }
       if (
-        stageState.t % (52 - Math.floor(1.7 * stageState.level)) === 0 ||
+        stageState.t % (46 - Math.floor(1.5 * stageState.level)) === 0 || //最大30レベル
         forceRefresh
       ) {
         if (isBottom(stageState.minoList) || isCollision(stageState.minoList)) {
