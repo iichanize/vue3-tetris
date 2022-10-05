@@ -38,7 +38,7 @@ import ScoreTransfer from "../infrastructure/transfer/ScoreTransfer";
 
 export default defineComponent({
   name: "Stage",
-  components: { PlayBoardLayer },
+  components: { import("../components/PlayBoardLayer.vue") },
   props: {
     maxFish: { type: Number, default: 50 },
   },

@@ -1,23 +1,20 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import Top from "../views/TopPage.vue";
-import Stage from "../views/Stage.vue";
-import Ranking from "../views/Ranking.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "Top",
-    component: Top,
+    component: () => import("../views/TopPage.vue"),
   },
   {
     path: "/tetris",
     name: "Tetris",
-    component: Stage,
+    component: () => import("../views/Stage.vue"),
   },
   {
     path: "/ranking",
     name: "Ranking",
-    component: Ranking,
+    component: () => import("../views/Ranking.vue"),
   },
 ];
 
