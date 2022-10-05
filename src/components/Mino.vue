@@ -284,7 +284,7 @@ export default defineComponent({
       return false;
     };
     useKeyDown(async (event: KeyboardEvent) => {
-      console.log("KEY:", event.key);
+      // console.log("KEY:", event.key);
       keyInput.value = event.key;
       if (keyInput.value === "ArrowLeft") {
         slideLeft();
@@ -652,8 +652,8 @@ export default defineComponent({
         if (isBottom(stageState.minoList) || isCollision(stageState.minoList)) {
           record();
           deleteLine();
-          console.log("REN", stageState.ren);
-          console.log("SCORE", stageState.totalScore);
+          // console.log("REN", stageState.ren);
+          // console.log("SCORE", stageState.totalScore);
           mapEmit();
           shiftStock();
           alignStock();

@@ -64,7 +64,6 @@ export default defineComponent({
       return router.replace({ name: "Ranking" });
     };
     const moveToTop = () => {
-      console.log("click!!!");
       return router.replace({ name: "Top" });
     };
     return {
