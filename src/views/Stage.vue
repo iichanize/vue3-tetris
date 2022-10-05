@@ -33,12 +33,13 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
-import PlayBoardLayer from "../components/PlayBoardLayer.vue";
 import ScoreTransfer from "../infrastructure/transfer/ScoreTransfer";
 
 export default defineComponent({
   name: "Stage",
-  components: { import("../components/PlayBoardLayer.vue") },
+  components: {
+    PlayBoardLayer: () => import("../components/PlayBoardLayer.vue"),
+  },
   props: {
     maxFish: { type: Number, default: 50 },
   },
