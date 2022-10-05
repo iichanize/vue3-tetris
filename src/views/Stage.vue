@@ -14,7 +14,7 @@
       <div class="header">
         <span> Result </span>
       </div>
-      <div class="body" v-if="flag">
+      <div class="body">
         <span>スコア：{{ score }}</span>
         <span
           >ユーザー名：
@@ -22,10 +22,12 @@
         </span>
       </div>
       <div class="footer">
+        <button @click="moveToTop">Topへ戻る</button>
         <button id="sendButton" @click="moveToRanking">ランキングへ送信</button>
       </div>
     </div>
   </div>
+  <button id="return" @click="moveToTop" v-else>Topへ戻る</button>
 </template>
 
 <script lang="ts">
@@ -59,6 +61,10 @@ export default defineComponent({
       await sendScore(userName.value, score.value);
       return router.replace({ name: "Ranking" });
     };
+    const moveToTop = () => {
+      console.log("click!!!");
+      return router.replace({ name: "Top" });
+    };
     return {
       flag,
       score,
@@ -66,6 +72,7 @@ export default defineComponent({
       ending,
       resultScore,
       moveToRanking,
+      moveToTop,
     };
   },
 });
@@ -202,24 +209,6 @@ export default defineComponent({
       padding: 1rem;
       border-top: 1px solid #dee2e6;
       margin-top: 10px;
-      button {
-        color: #fff;
-        background-color: rgb(67, 144, 70);
-        border-color: rgb(67, 144, 70);
-        cursor: pointer;
-        font-weight: 400;
-        padding: 0.375rem 0.75rem;
-        font-size: 15px;
-        line-height: 1.5;
-        border-radius: 0.25rem;
-        border: 1px solid transparent;
-        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-          border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-        &:focus {
-          box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
-          outline: 0;
-        }
-      }
     }
   }
   @media (max-width: 768px) {
@@ -234,6 +223,31 @@ export default defineComponent({
         }
       }
     }
+  }
+}
+#return {
+  position: absolute;
+  top: 90%;
+  left: 80%;
+}
+button {
+  margin: 1rem;
+  z-index: 20;
+  color: #fff;
+  background-color: rgb(67, 144, 70);
+  border-color: rgb(67, 144, 70);
+  cursor: pointer;
+  font-weight: 400;
+  padding: 0.375rem 0.75rem;
+  font-size: 15px;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  border: 1px solid transparent;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  &:focus {
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
+    outline: 0;
   }
 }
 </style>
