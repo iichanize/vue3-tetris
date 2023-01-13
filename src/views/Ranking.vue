@@ -35,7 +35,7 @@ export default defineComponent({
     const headers = ["No.", "名前", "スコア"];
 
     const getRanking = async () => {
-      ranking.value = await scoreTransfer.getRanking();
+      ranking.value = await scoreTransfer.selectScore();
     };
     const moveToTop = () => {
       return router.replace({ name: "Top" });

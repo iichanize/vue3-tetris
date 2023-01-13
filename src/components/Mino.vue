@@ -61,7 +61,6 @@ type StageState = {
   minoList: MinoModel[];
   map: number[][];
   t: number;
-  healthCheckTime: number;
   name: string[];
   holdMino: MinoModel[];
   stock: MinoModel[];
@@ -109,7 +108,6 @@ export default defineComponent({
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       ],
       t: 0,
-      healthCheckTime: 0,
       name: JSON.parse(JSON.stringify(Constants.NAMES)),
       holdMino: [],
       stock: [],
@@ -641,10 +639,6 @@ export default defineComponent({
       if (stageState.map[1][4] === 1) {
         return false;
       }
-      // if (stageState.healthCheckTime % 2000 === 0) {
-      //   scoreTransfer.healthCheck();
-      //   stageState.healthCheckTime = 0;
-      // }
       if (
         stageState.t % (46 - Math.floor(1.5 * stageState.level)) === 0 || //最大30レベル
         forceRefresh
@@ -670,7 +664,6 @@ export default defineComponent({
         }
       }
       stageState.t++;
-      stageState.healthCheckTime++;
       return true;
     });
 
