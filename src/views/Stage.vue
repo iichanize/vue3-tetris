@@ -57,7 +57,7 @@ export default defineComponent({
       score.value = result;
     };
     const sendScore = async (name: string, value: number) => {
-      return await scoreTransfer.sendScore(name, value);
+      return await scoreTransfer.registerScore(name, value);
     };
     const moveToRanking = async () => {
       await sendScore(userName.value, score.value);
