@@ -1,9 +1,14 @@
-import axios from "axios";
 import Score from "../../domain/Score";
 import { createClient } from "@supabase/supabase-js";
-const SUPABASE_URL = process.env.VUE_APP_SUPABASE_URL;
-const SUPABASE_API_KEY = process.env.VUE_APP_SUPABASE_API_KEY;
-const supabase = createClient(SUPABASE_URL!, SUPABASE_API_KEY!);
+
+const SUPABASE_URL = process.env.VUE_APP_SUPABASE_URL
+  ? process.env.VUE_APP_SUPABASE_URL
+  : "";
+const SUPABASE_API_KEY = process.env.VUE_APP_SUPABASE_API_KEY
+  ? process.env.VUE_APP_SUPABASE_API_KEY
+  : "";
+const supabase = createClient(SUPABASE_URL, SUPABASE_API_KEY);
+
 export default class ScoreTransfer {
   public async registerScore(name: string, score: number) {
     const data = {
