@@ -2,7 +2,7 @@
 // Vueとして状態を管理する必要がないので関数コンポーネントにしています。
 
 import { h } from "vue";
-import { Point } from "../core/Point";
+import { Point } from "../domain/Point";
 
 type Props = {
   x: number;

@@ -19,8 +19,8 @@
 import { defineComponent, onMounted, reactive, ref } from "vue";
 import { Block } from "./Block";
 import { useAnimationFrame } from "../core/useAnimationFrame";
-import { MinoModel } from "../core/MinoModel";
-import Constants from "../core/Constants";
+import { MinoModel } from "../domain/MinoModel";
+import Constants from "../domain/Constants";
 import MinoLayer from "./Mino.vue";
 
 /**

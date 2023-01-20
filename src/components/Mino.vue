@@ -48,10 +48,10 @@
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref } from "vue";
 import { Block } from "./Block";
-import { Point } from "../core/Point";
+import { Point } from "../domain/Point";
 import { useAnimationFrame } from "../core/useAnimationFrame";
-import { MinoModel } from "../core/MinoModel";
-import Constants from "../core/Constants";
+import { MinoModel } from "../domain/MinoModel";
+import Constants from "../domain/Constants";
 import { useKeyDown } from "../core/useKeyEvent";
 
 /**
