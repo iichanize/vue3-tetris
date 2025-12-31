@@ -1,5 +1,5 @@
 <template>
-  <div class="PlayBoardLayerRoot">
+  <div class="PlayBoardLayerRoot" :class="{ 'mobile-layout': isMobile }">
     <Block
       v-for="blockProps in stageState.wallList"
       :key="blockProps.id"
@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, reactive, ref } from "vue";
+import { defineComponent, reactive, ref, inject, watchEffect } from "vue";
 import { Block } from "./Block";
 import { useAnimationFrame } from "../core/useAnimationFrame";
 import { MinoModel } from "../domain/MinoModel";
@@ -37,6 +37,7 @@ export default defineComponent({
   components: { Block, MinoLayer },
   props: {},
   setup(props, ctx) {
+    const isMobile = inject("isMobile") as any; // Type casting for ease, properly should be Ref<boolean>
     // state: レイヤーの状態
     const stageState = reactive<StageState>({
       map: [
@@ -69,12 +70,43 @@ export default defineComponent({
     const getMap = (map: number[][]) => {
       stageState.map = map;
     };
-    let baseX1 = ref(
-      Math.floor(0.5 * window.innerWidth) - 6 * Constants.BLOCK_SIZE
-    );
-    let baseX2 = ref(
-      Math.floor(0.5 * window.innerWidth) + 5 * Constants.BLOCK_SIZE
-    );
+
+    let baseX1 = ref(0);
+    let baseX2 = ref(0); // Right wall
+
+    // Calculate base position based on layout mode
+    const updateBasePosition = () => {
+      const mobile = isMobile.value;
+      const vWidth = mobile
+        ? Constants.VIRTUAL_WIDTH_SP
+        : Constants.VIRTUAL_WIDTH_PC;
+
+      // Field Width (10 blocks) + Walls (2 blocks) = 12 blocks * 40 = 480px ?
+      // No, Wall is drawn at baseX1. Field starts inside.
+      // Wall Left (baseX1), Wall Right (baseX2).
+      // Between walls: 10 blocks (400px).
+      // Wall thickness: MinoModel size is 40px block.
+      // So Wall Left is x, Wall Right is x + 11 blocks (440px).
+      // Field is from x + 40 to x + 440.
+
+      let startX = 0;
+      if (mobile) {
+        // Center-Left Align on Mobile
+        startX = vWidth / 2 - 170;
+      } else {
+        // Center Align on PC
+        startX = Math.floor(0.5 * vWidth) - 6 * Constants.BLOCK_SIZE;
+      }
+      baseX1.value = startX;
+      baseX2.value = startX + 11 * Constants.BLOCK_SIZE;
+
+      // We need to clear and rebuild walls when resizing?
+      // existing wallList is reactive. We can just clear and rebuild or resize.
+      // The original code used `resize` method on MinoModel.
+      // But here we are changing base completely. It's cleaner to reset wallList.
+      stageState.wallList = [];
+      buildWall();
+    };
     const buildWall = () => {
       let y1 = 2 * Constants.BLOCK_SIZE;
       let y2 = 22 * Constants.BLOCK_SIZE;
@@ -113,6 +145,10 @@ export default defineComponent({
       }
     };
 
+    watchEffect(() => {
+      updateBasePosition();
+    });
+
     let totalScore = ref(0);
 
     const updateScore = (score: number) => {
@@ -139,6 +175,8 @@ export default defineComponent({
       return true;
     });
 
+    // Old adoptMinoPosToWindow logic removed as we use virtual size
+    /*
     const adoptMinoPosToWindow = () => {
       const newBaseX1 =
         Math.floor(0.5 * window.innerWidth) - 6 * Constants.BLOCK_SIZE;
@@ -147,10 +185,11 @@ export default defineComponent({
       }
       baseX1.value = newBaseX1;
     };
+    */
 
-    onMounted(() => {
-      window.addEventListener("resize", adoptMinoPosToWindow);
-    });
+    // onMounted(() => {
+    //   window.addEventListener("resize", adoptMinoPosToWindow);
+    // });
 
     return {
       baseX1,
@@ -161,6 +200,7 @@ export default defineComponent({
       updateScore,
       level,
       setLevel,
+      isMobile,
     };
   },
 });
@@ -208,5 +248,15 @@ export default defineComponent({
   color: rgba(255, 255, 255, 1);
   font-size: 30px;
   -webkit-text-stroke: 1px #000;
+}
+.mobile-layout .score {
+  left: calc(50% - 340px);
+  top: 620px;
+  font-size: 20px;
+}
+.mobile-layout .level {
+  left: calc(50% - 340px);
+  top: 670px;
+  font-size: 20px;
 }
 </style>

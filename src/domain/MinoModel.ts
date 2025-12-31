@@ -18,6 +18,7 @@ export class MinoModel {
   color = "";
   shape: Point[] = [];
   insensitiveTerms = 0;
+  scale = 1;
   constructor(
     x: number,
     y: number,

@@ -1,37 +1,41 @@
 <template>
-  <PlayBoardLayer @ending="ending" @score="resultScore" />
-  <div class="arrow">
-    <div id="first">↑</div>
-    <div id="second">↑</div>
-    <div id="third">↑</div>
-  </div>
-  <div class="holdFrame"></div>
-  <div class="title" id="hold">HOLD</div>
-  <div class="stockFrame"></div>
-  <div class="title" id="stock">NEXT</div>
-  <div class="end" v-if="flag">
-    <div class="message">
-      <div class="header">
-        <span> Result </span>
-      </div>
-      <div class="body">
-        <span>スコア：{{ score }}</span>
-        <span
-          >ユーザー名：
-          <input v-model="userName" />
-        </span>
-      </div>
-      <div class="footer">
-        <button @click="moveToTop">Topへ戻る</button>
-        <button id="sendButton" @click="moveToRanking">ランキングへ送信</button>
+  <div class="StageRoot" :class="{ 'mobile-layout': isMobile }">
+    <PlayBoardLayer @ending="ending" @score="resultScore" />
+    <div class="arrow" v-if="!isMobile">
+      <div id="first">↑</div>
+      <div id="second">↑</div>
+      <div id="third">↑</div>
+    </div>
+    <div class="holdFrame"></div>
+    <div class="title" id="hold">HOLD</div>
+    <div class="stockFrame"></div>
+    <div class="title" id="stock">NEXT</div>
+    <div class="end" v-if="flag">
+      <div class="message">
+        <div class="header">
+          <span> Result </span>
+        </div>
+        <div class="body">
+          <span>スコア:{{ score }}</span>
+          <span
+            >ユーザー名：
+            <input v-model="userName" />
+          </span>
+        </div>
+        <div class="footer">
+          <button @click="moveToTop">Topへ戻る</button>
+          <button id="sendButton" @click="moveToRanking">
+            ランキングへ送信
+          </button>
+        </div>
       </div>
     </div>
+    <button id="return" @click="moveToTop" v-else>Topへ戻る</button>
   </div>
-  <button id="return" @click="moveToTop" v-else>Topへ戻る</button>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, inject } from "vue";
 import { useRouter } from "vue-router";
 import PlayBoardLayer from "../components/PlayBoardLayer.vue";
 import ScoreTransfer from "../infrastructure/transfer/ScoreTransfer";
@@ -45,6 +49,7 @@ export default defineComponent({
     maxFish: { type: Number, default: 50 },
   },
   setup() {
+    const isMobile = inject("isMobile");
     let flag = ref(false);
     let score = ref(0);
     let userName = ref("");
@@ -74,11 +79,17 @@ export default defineComponent({
       resultScore,
       moveToRanking,
       moveToTop,
+      isMobile,
     };
   },
 });
 </script>
 <style scoped lang="scss">
+.StageRoot {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
 .holdFrame {
   width: 240px;
   height: 240px;
@@ -249,6 +260,46 @@ button {
   &:focus {
     box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
     outline: 0;
+  }
+}
+
+/* Mobile Layout Overrides */
+.mobile-layout {
+  .holdFrame {
+    left: calc(50% - 350px);
+    top: 20px;
+    width: 160px;
+    height: 160px;
+  }
+  #hold.title {
+    left: calc(50% - 340px);
+    top: 30px;
+    width: 140px;
+    font-size: 30px;
+    text-align: center;
+  }
+
+  .stockFrame {
+    left: calc(50% - 350px);
+    top: 200px;
+    width: 160px;
+    height: 400px;
+  }
+  #stock.title {
+    left: calc(50% - 340px);
+    top: 210px;
+    width: 140px;
+    font-size: 30px;
+    text-align: center;
+  }
+
+  #return {
+    left: calc(50% - 350px);
+    top: 840px;
+    width: 80px;
+    height: 35px;
+    font-size: 14px;
+    padding: 0;
   }
 }
 </style>

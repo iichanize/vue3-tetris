@@ -12,6 +12,12 @@ export class Constants {
     S: "0, 255, 0", //"lime", #00FF00
     Z: "255, 0, 0", //"red", #FF0000
   };
+  // Virtual Screen Dimensions
+  static readonly VIRTUAL_WIDTH_PC = 1200;
+  static readonly VIRTUAL_HEIGHT_PC = 900;
+  static readonly VIRTUAL_WIDTH_SP = 750;
+  static readonly VIRTUAL_HEIGHT_SP = 960;
+
   static readonly SHAPE: { [index: string]: Point[] } = {
     T: [new Point(0, 0), new Point(0, -1), new Point(-1, 0), new Point(1, 0)],
     I: [new Point(0, 0), new Point(-1, 0), new Point(1, 0), new Point(2, 0)],

@@ -14,6 +14,7 @@ type Props = {
 };
 
 export const Block = (props: Props) => {
-  const style = `color: ${props.color};transform: translate(${props.x}px, ${props.y}px);`;
+  const scale = props.scale || 1;
+  const style = `color: ${props.color};transform: translate(${props.x}px, ${props.y}px) scale(${scale});`;
   return h("div", { class: "BlockRoot", style });
 };
