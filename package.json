@@ -9,6 +9,9 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
+  "engines": {
+    "node": "18.x"
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.4.0",
     "axios": "^0.27.2",
