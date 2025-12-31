@@ -48,11 +48,14 @@ export default defineComponent({
 
     const headers = ["キー", "動作"];
     const keyConfig = [
-      { keyName: "←/→", move: "左移動 / 右移動" },
-      { keyName: "↑", move: "ハードドロップ" },
-      { keyName: "↓", move: "高速落下" },
-      { keyName: "z/x", move: "左回転 / 右回転" },
-      { keyName: "a", move: "HOLD と落下中のテトリミノの入れ替え" },
+      { keyName: "←/→ / 左右スワイプ", move: "左移動 / 右移動" },
+      { keyName: "↑ / 上にスワイプ", move: "ハードドロップ" },
+      { keyName: "↓ / 下にスワイプ", move: "高速落下" },
+      { keyName: "z/x / タップ", move: "左回転 / 右回転" },
+      {
+        keyName: "a / HOLDボタン",
+        move: "HOLD と落下中のテトリミノの入れ替え",
+      },
     ];
 
     return {
