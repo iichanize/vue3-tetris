@@ -907,7 +907,7 @@ export default defineComponent({
 }
 .mobile-layout .hold-button {
   left: calc(50% - 350px);
-  top: 750px;
+  top: 840px; /* Swapped with Return (was 750px) */
   bottom: auto;
   width: 120px;
   height: 60px;

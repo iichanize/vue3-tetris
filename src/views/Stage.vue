@@ -30,7 +30,22 @@
         </div>
       </div>
     </div>
-    <button id="return" @click="moveToTop" v-else>Topへ戻る</button>
+    <div class="confirm-modal" v-if="showConfirmModal">
+      <div class="message">
+        <div class="header">
+          <span>確認</span>
+        </div>
+        <div class="body">
+          <p>TOPへ戻りますか？</p>
+        </div>
+        <div class="footer">
+          <button @click="confirmReturn">はい</button>
+          <button @click="cancelReturn">いいえ</button>
+        </div>
+      </div>
+    </div>
+    <button id="return" @click="openConfirmModal" v-else>Topへ戻る</button>
+    <img :src="swipeGuide" class="swipe-guide" v-if="isMobile" />
   </div>
 </template>
 
@@ -39,6 +54,7 @@ import { defineComponent, ref, inject } from "vue";
 import { useRouter } from "vue-router";
 import PlayBoardLayer from "../components/PlayBoardLayer.vue";
 import ScoreTransfer from "../infrastructure/transfer/ScoreTransfer";
+import swipeGuide from "../assets/swipe_icon_nanobanana.png";
 
 export default defineComponent({
   name: "Stage",
@@ -51,6 +67,7 @@ export default defineComponent({
   setup() {
     const isMobile = inject("isMobile");
     let flag = ref(false);
+    let showConfirmModal = ref(false);
     let score = ref(0);
     let userName = ref("");
     const router = useRouter();
@@ -69,7 +86,18 @@ export default defineComponent({
       return router.replace({ name: "Ranking" });
     };
     const moveToTop = () => {
-      return router.replace({ name: "Top" });
+      // Direct navigation logic is moved to confirmReturn
+      router.replace({ name: "Top" });
+    };
+    const openConfirmModal = () => {
+      showConfirmModal.value = true;
+    };
+    const confirmReturn = () => {
+      showConfirmModal.value = false;
+      moveToTop();
+    };
+    const cancelReturn = () => {
+      showConfirmModal.value = false;
     };
     return {
       flag,
@@ -79,7 +107,12 @@ export default defineComponent({
       resultScore,
       moveToRanking,
       moveToTop,
+      openConfirmModal,
+      confirmReturn,
+      cancelReturn,
+      showConfirmModal,
       isMobile,
+      swipeGuide,
     };
   },
 });
@@ -295,11 +328,65 @@ button {
 
   #return {
     left: calc(50% - 350px);
-    top: 840px;
+    top: 750px; /* Swapped with Hold (was 840px) */
     width: 80px;
     height: 35px;
     font-size: 14px;
     padding: 0;
+  }
+
+  .confirm-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+
+    .message {
+      background-color: #fff;
+      border-radius: 5px;
+      overflow: hidden;
+      min-width: 300px;
+      display: flex;
+      flex-direction: column;
+
+      .header {
+        background-color: rgb(67, 144, 70);
+        color: white;
+        padding: 10px;
+        font-weight: bold;
+      }
+      .body {
+        padding: 20px;
+        text-align: center;
+        p {
+          margin: 0;
+          font-size: 18px;
+          color: black;
+        }
+      }
+      .footer {
+        padding: 10px;
+        display: flex;
+        justify-content: space-around;
+        border-top: 1px solid #ddd;
+      }
+    }
+  }
+
+  .swipe-guide {
+    position: absolute;
+    left: calc(50% - 150px);
+    top: 950px;
+    width: 300px;
+    opacity: 0.8;
+    z-index: 5;
+    pointer-events: none;
   }
 }
 </style>
