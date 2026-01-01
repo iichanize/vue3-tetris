@@ -1,6 +1,6 @@
 <template>
   <!-- ミノ(フィールド内、ゴースト、ホールド欄、NEXT欄)表示レイヤー -->
-  <div class="MinoLayerRoot">
+  <div class="MinoLayerRoot" :class="{ 'mobile-layout': isMobile }">
     <Block
       v-for="block in stageState.ghost"
       :key="block.id"
@@ -42,17 +42,19 @@
       :color="block.color"
       :scale="block.scale"
     />
+    <button class="hold-button" @click.stop="holdAction">HOLD</button>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, reactive, ref } from "vue";
+import { defineComponent, reactive, ref, inject, watchEffect } from "vue";
 import { Block } from "./Block";
 import { Point } from "../domain/Point";
 import { useAnimationFrame } from "../core/useAnimationFrame";
 import { MinoModel } from "../domain/MinoModel";
 import Constants from "../domain/Constants";
 import { useKeyDown } from "../core/useKeyEvent";
+import { useSwipe } from "../core/useSwipe";
 
 /**
  * ミノレイヤーの状態を管理する型
@@ -80,6 +82,7 @@ export default defineComponent({
   setup(props, ctx) {
     // state: レイヤーの状態
     // const { keyInput } = toRefs(props);
+    const isMobile = inject("isMobile") as any;
     let keyInput = ref("");
     const stageState = reactive<StageState>({
       minoList: [],
@@ -119,10 +122,123 @@ export default defineComponent({
     });
     let forceRefresh = false;
     let canHold = true;
-    let baseX = ref(
-      Math.floor(0.5 * window.innerWidth) - 5 * Constants.BLOCK_SIZE
-    );
+
+    let baseX = ref(0);
+    // Base Y for the field (top of visible area)
     let baseY = 2 * Constants.BLOCK_SIZE;
+
+    const updateBasePosition = () => {
+      const mobile = isMobile.value;
+      const vWidth = mobile
+        ? Constants.VIRTUAL_WIDTH_SP
+        : Constants.VIRTUAL_WIDTH_PC;
+
+      let startX = 0;
+      if (mobile) {
+        // Center-Left Align on Mobile
+        const wallX = vWidth / 2 - 170;
+        startX = wallX + Constants.BLOCK_SIZE;
+      } else {
+        startX = Math.floor(0.5 * vWidth) - 5 * Constants.BLOCK_SIZE;
+      }
+      baseX.value = startX;
+    };
+
+    const alignHold = () => {
+      const mobile = isMobile.value;
+      const vWidth = mobile
+        ? Constants.VIRTUAL_WIDTH_SP
+        : Constants.VIRTUAL_WIDTH_PC;
+      let startX = 0;
+      let startY = 0;
+      let scale = 1;
+      let blockSize = Constants.BLOCK_SIZE;
+
+      if (mobile) {
+        // Mobile Hold: Top Left Frame
+        scale = 0.6;
+        blockSize = Constants.BLOCK_SIZE * scale;
+        // Center in Hold Frame (Frame Left: Center - 350)
+        startX = vWidth / 2 - 318;
+        startY = 110;
+      } else {
+        // PC Hold: Left of Field
+        startX = baseX.value - 6 * Constants.BLOCK_SIZE;
+        startY = baseY + 3 * Constants.BLOCK_SIZE;
+        scale = 1;
+      }
+
+      stageState.holdMino.forEach((block, index) => {
+        const shapePt = Constants.SHAPE[block.name][index];
+        block.position = new Point(
+          startX + shapePt.x * blockSize,
+          startY + shapePt.y * blockSize
+        );
+        block.scale = scale;
+      });
+    };
+
+    const alignStock = () => {
+      const mobile = isMobile.value;
+      const vWidth = mobile
+        ? Constants.VIRTUAL_WIDTH_SP
+        : Constants.VIRTUAL_WIDTH_PC;
+      let startX = 0;
+      let startY = 0;
+      let scale = 1;
+      let blockSize = Constants.BLOCK_SIZE;
+
+      if (mobile) {
+        // Mobile Next: Left, below Hold
+        // Center in Stock Frame
+        scale = 0.6;
+        blockSize = Constants.BLOCK_SIZE * scale;
+        startX = vWidth / 2 - 318;
+        startY = 270;
+      } else {
+        // PC Next: Right of Field
+        startX = baseX.value + 14 * Constants.BLOCK_SIZE;
+        startY = 4 * Constants.BLOCK_SIZE;
+        scale = 1;
+      }
+
+      stageState.stock.forEach((block, index) => {
+        const minoIndex = Math.floor(index / 4);
+        const blockIndex = index % 4;
+        const shapePt = Constants.SHAPE[block.name][blockIndex];
+
+        block.position = new Point(
+          startX + shapePt.x * blockSize,
+          startY + minoIndex * 3 * blockSize + shapePt.y * blockSize
+        );
+        block.scale = scale;
+      });
+    };
+
+    let oldBaseX = 0;
+    watchEffect(() => {
+      // Calculate new baseX logic manually to compare or just call updateBasePosition
+      // We will call updateBasePosition() which updates 'baseX.value'
+      updateBasePosition();
+      let newBaseX = baseX.value; // Updated value
+
+      // Shift active minos and ghosts (relative to field)
+      if (oldBaseX !== 0 && newBaseX !== oldBaseX) {
+        const diff = newBaseX - oldBaseX;
+        for (let i = 0; i < stageState.minoList.length; i++) {
+          stageState.minoList[i].resize(diff);
+        }
+        for (let i = 0; i < stageState.ghost.length; i++) {
+          stageState.ghost[i].resize(diff);
+        }
+      }
+
+      // Re-align Hold and Stock (Absolute positioning)
+      alignHold();
+      alignStock();
+
+      oldBaseX = newBaseX;
+    });
     const record = () => {
       stageState.map = JSON.parse(
         JSON.stringify(new Array(22).fill(new Array(10).fill(0)))
@@ -170,8 +286,8 @@ export default defineComponent({
       }
     };
     const hold = () => {
-      const x = baseX.value - 5 * Constants.BLOCK_SIZE;
-      const y = baseY + 3 * Constants.BLOCK_SIZE;
+      const x = 0;
+      const y = 0;
       for (let i = 0; i < 4; i++) {
         let length = stageState.minoList.length;
         const temp = stageState.minoList[length - 1];
@@ -212,6 +328,7 @@ export default defineComponent({
         shiftStock();
         alignStock();
       }
+      alignHold();
     };
 
     const shiftStock = () => {
@@ -233,18 +350,6 @@ export default defineComponent({
         );
         stageState.stock.shift();
       }
-    };
-
-    const alignStock = () => {
-      stageState.stock.map((mino, index) => {
-        mino.position = new Point(
-          mino.position.x,
-          (4 +
-            Constants.SHAPE[mino.name][index % 4].y +
-            Math.floor(index / 4) * 3) *
-            Constants.BLOCK_SIZE
-        );
-      });
     };
 
     const isBottom = (minoList: MinoModel[]) => {
@@ -281,58 +386,108 @@ export default defineComponent({
       }
       return false;
     };
+    const moveLeft = async () => {
+      keyInput.value = "ArrowLeft";
+      slideLeft();
+      collisionToWall();
+      collisionToLeftMino();
+      setGhost();
+    };
+
+    const moveRight = async () => {
+      keyInput.value = "ArrowRight";
+      slideRight();
+      collisionToWall();
+      collisionToRightMino();
+      setGhost();
+    };
+
+    const softDrop = () => {
+      keyInput.value = "ArrowDown";
+      if (!isBottom(stageState.minoList) && !isCollision(stageState.minoList)) {
+        drop(stageState.minoList);
+        stageState.t = 1;
+        stageState.totalScore += 5;
+        ctx.emit("score", stageState.totalScore);
+      }
+    };
+
+    const hardDrop = () => {
+      keyInput.value = "ArrowUp";
+      while (
+        !isBottom(stageState.minoList) &&
+        !isCollision(stageState.minoList)
+      ) {
+        drop(stageState.minoList);
+        stageState.totalScore += 5;
+      }
+      ctx.emit("score", stageState.totalScore);
+      forceRefresh = true;
+    };
+
+    const rotateRightAction = async () => {
+      keyInput.value = "x";
+      await superRotateRight();
+      setGhost();
+    };
+
+    const rotateLeftAction = async () => {
+      keyInput.value = "z";
+      await superRotateLeft();
+      setGhost();
+    };
+
+    const holdAction = () => {
+      keyInput.value = "a";
+      if (canHold) {
+        hold();
+        canHold = false;
+        forceRefresh = true;
+      }
+    };
+
     useKeyDown(async (event: KeyboardEvent) => {
       // console.log("KEY:", event.key);
       keyInput.value = event.key;
       if (keyInput.value === "ArrowLeft") {
-        slideLeft();
-        collisionToWall();
-        collisionToLeftMino();
-        setGhost();
+        await moveLeft();
       }
       if (keyInput.value === "ArrowRight") {
-        slideRight();
-        collisionToWall();
-        collisionToRightMino();
-        setGhost();
+        await moveRight();
       }
       if (keyInput.value === "ArrowDown") {
-        if (
-          !isBottom(stageState.minoList) &&
-          !isCollision(stageState.minoList)
-        ) {
-          drop(stageState.minoList);
-          stageState.t = 1;
-          stageState.totalScore += 5;
-          ctx.emit("score", stageState.totalScore);
-        }
+        softDrop();
       }
       if (keyInput.value === "ArrowUp") {
-        while (
-          !isBottom(stageState.minoList) &&
-          !isCollision(stageState.minoList)
-        ) {
-          drop(stageState.minoList);
-          stageState.totalScore += 5;
-        }
-        ctx.emit("score", stageState.totalScore);
-        forceRefresh = true;
+        hardDrop();
       }
       if (keyInput.value === "x") {
-        await superRotateRight();
-        setGhost();
+        await rotateRightAction();
       }
       if (keyInput.value === "z") {
-        await superRotateLeft();
-        setGhost();
+        await rotateLeftAction();
       }
       if (keyInput.value === "a") {
-        if (canHold) {
-          hold();
-          canHold = false;
-          forceRefresh = true;
-        }
+        holdAction();
       }
+    });
+
+    useSwipe({
+      onSwipeLeft: async () => {
+        await moveLeft();
+      },
+      onSwipeRight: async () => {
+        await moveRight();
+      },
+      onSwipeDown: () => {
+        softDrop();
+      },
+      onSwipeUp: () => {
+        hardDrop();
+      },
+      onTap: async () => {
+        await rotateRightAction();
+      },
     });
 
     const collisionToWall = async () => {
@@ -672,6 +827,7 @@ export default defineComponent({
       ctx.emit("level", stageState.level);
     };
 
+    /*
     const adoptMinoPosToWindow = () => {
       const newBaseX =
         Math.floor(0.5 * window.innerWidth) - 5 * Constants.BLOCK_SIZE;
@@ -689,10 +845,11 @@ export default defineComponent({
       }
       baseX.value = newBaseX;
     };
+    */
 
-    onMounted(() => {
-      window.addEventListener("resize", adoptMinoPosToWindow);
-    });
+    // onMounted(() => {
+    //   window.addEventListener("resize", adoptMinoPosToWindow);
+    // });
 
     return {
       baseX,
@@ -700,6 +857,8 @@ export default defineComponent({
       hold,
       stageState,
       mapEmit,
+      holdAction,
+      isMobile,
     };
   },
 });
@@ -731,5 +890,27 @@ export default defineComponent({
   // opacity: 0.7;
   will-change: transform;
   pointer-events: none;
+}
+.hold-button {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  z-index: 100;
+  padding: 10px 20px;
+  background-color: rgb(67, 144, 70);
+  color: white;
+  border: 2px solid white;
+  border-radius: 5px;
+  font-weight: bold;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.mobile-layout .hold-button {
+  left: calc(50% - 350px);
+  top: 840px; /* Swapped with Return (was 750px) */
+  bottom: auto;
+  width: 120px;
+  height: 60px;
+  font-size: 24px;
 }
 </style>
