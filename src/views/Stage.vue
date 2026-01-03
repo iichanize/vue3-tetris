@@ -335,50 +335,6 @@ button {
     padding: 0;
   }
 
-  .confirm-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-
-    .message {
-      background-color: #fff;
-      border-radius: 5px;
-      overflow: hidden;
-      min-width: 300px;
-      display: flex;
-      flex-direction: column;
-
-      .header {
-        background-color: rgb(67, 144, 70);
-        color: white;
-        padding: 10px;
-        font-weight: bold;
-      }
-      .body {
-        padding: 20px;
-        text-align: center;
-        p {
-          margin: 0;
-          font-size: 18px;
-          color: black;
-        }
-      }
-      .footer {
-        padding: 10px;
-        display: flex;
-        justify-content: space-around;
-        border-top: 1px solid #ddd;
-      }
-    }
-  }
-
   .swipe-guide {
     position: absolute;
     left: calc(50% - 150px);
@@ -387,6 +343,50 @@ button {
     opacity: 0.8;
     z-index: 5;
     pointer-events: none;
+  }
+}
+
+.confirm-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+  .message {
+    background-color: #fff;
+    border-radius: 5px;
+    overflow: hidden;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+
+    .header {
+      background-color: rgb(67, 144, 70);
+      color: white;
+      padding: 10px;
+      font-weight: bold;
+    }
+    .body {
+      padding: 20px;
+      text-align: center;
+      p {
+        margin: 0;
+        font-size: 18px;
+        color: black;
+      }
+    }
+    .footer {
+      padding: 10px;
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid #ddd;
+    }
   }
 }
 </style>
