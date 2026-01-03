@@ -35,8 +35,10 @@ type StageState = {
 export default defineComponent({
   name: "PlayBoardLayer",
   components: { Block, MinoLayer },
-  emits: ["ending", "score"],
-  props: {},
+  emits: {
+    ending: (value: boolean) => true,
+    score: (value: number) => true,
+  },
   setup(props, ctx) {
     const isMobile = inject("isMobile") as any; // Type casting for ease, properly should be Ref<boolean>
     // state: レイヤーの状態
