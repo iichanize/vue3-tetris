@@ -11,9 +11,26 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_API_KEY);
 
 export default class ScoreTransfer {
   public async registerScore(name: string, score: number) {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    let userId = session?.user?.id;
+
+    if (!userId) {
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.signInAnonymously();
+      if (error) {
+        throw error;
+      }
+      userId = user?.id;
+    }
+
     const data = {
       name: name,
       score: score,
+      user_id: userId,
     };
     const response = await supabase.from("usr_score").insert([data]);
     return response.data;
