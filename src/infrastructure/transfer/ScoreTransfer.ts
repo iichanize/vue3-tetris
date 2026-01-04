@@ -10,22 +10,25 @@ const SUPABASE_API_KEY = process.env.VUE_APP_SUPABASE_API_KEY
 const supabase = createClient(SUPABASE_URL, SUPABASE_API_KEY);
 
 export default class ScoreTransfer {
-  public async registerScore(name: string, score: number) {
+  private async ensureAuth(): Promise<void> {
     const {
       data: { session },
     } = await supabase.auth.getSession();
-    let userId = session?.user?.id;
 
-    if (!userId) {
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.signInAnonymously();
+    if (!session?.user?.id) {
+      const { error } = await supabase.auth.signInAnonymously();
       if (error) {
         throw error;
       }
-      userId = user?.id;
     }
+  }
+
+  public async registerScore(name: string, score: number) {
+    await this.ensureAuth();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    const userId = session?.user?.id;
 
     const data = {
       name: name,
@@ -37,6 +40,7 @@ export default class ScoreTransfer {
   }
 
   public async selectScore(): Promise<Score[]> {
+    await this.ensureAuth();
     const res = await supabase
       .from("usr_score")
       .select("name, score")
