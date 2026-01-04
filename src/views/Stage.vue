@@ -223,28 +223,23 @@ export default defineComponent({
       display: flex;
       flex-direction: column;
       padding: 1.5rem;
-      .inputItem {
-        display: flex;
-        flex-direction: column;
-        padding: 0.5rem 1rem;
-        span {
-          font-size: 15px;
-          margin-bottom: 0.1rem;
-        }
-        select,
-        input {
-          font-size: 15px;
-          padding: 0.25rem;
-        }
-        select {
-          background-color: #fff;
-          border: 1px solid #ced4da;
-          outline: 0;
-        }
+      span {
+        font-size: 25px;
+        margin-bottom: 0.1rem;
+      }
+      select,
+      input {
+        font-size: 25px;
+        padding: 0.25rem;
+      }
+      select {
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        outline: 0;
       }
       p {
         margin-left: 1rem;
-        font-size: 15px;
+        font-size: 25px;
       }
     }
     .footer {
@@ -377,7 +372,7 @@ button {
       text-align: center;
       p {
         margin: 0;
-        font-size: 18px;
+        font-size: 25px;
         color: black;
       }
     }

@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, inject, watchEffect } from "vue";
+import { defineComponent, reactive, ref, inject, watchEffect, Ref } from "vue";
 import { Block } from "./Block";
 import { Point } from "../domain/Point";
 import { useAnimationFrame } from "../core/useAnimationFrame";
@@ -82,7 +82,7 @@ export default defineComponent({
   setup(props, ctx) {
     // state: レイヤーの状態
     // const { keyInput } = toRefs(props);
-    const isMobile = inject("isMobile") as any;
+    const isMobile = inject("isMobile") as Ref<boolean>;
     let keyInput = ref("");
     const stageState = reactive<StageState>({
       minoList: [],

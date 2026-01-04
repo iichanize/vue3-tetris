@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, inject, watchEffect } from "vue";
+import { defineComponent, reactive, ref, inject, watchEffect, Ref } from "vue";
 import { Block } from "./Block";
 import { useAnimationFrame } from "../core/useAnimationFrame";
 import { MinoModel } from "../domain/MinoModel";
@@ -36,11 +36,11 @@ export default defineComponent({
   name: "PlayBoardLayer",
   components: { Block, MinoLayer },
   emits: {
-    ending: (value: boolean) => true,
-    score: (value: number) => true,
+    ending: (_value: boolean) => true,
+    score: (_value: number) => true,
   },
   setup(props, ctx) {
-    const isMobile = inject("isMobile") as any; // Type casting for ease, properly should be Ref<boolean>
+    const isMobile = inject("isMobile") as Ref<boolean>; // Type casting for ease, properly should be Ref<boolean>
     // state: レイヤーの状態
     const stageState = reactive<StageState>({
       map: [
